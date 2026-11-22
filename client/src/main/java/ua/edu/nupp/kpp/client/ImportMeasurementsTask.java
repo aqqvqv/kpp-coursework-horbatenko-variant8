@@ -25,20 +25,23 @@ public class ImportMeasurementsTask extends Task<Integer> {
             throw new IllegalArgumentException("CSV-файл не знайдено: " + csvPath);
         }
         List<String> lines = Files.readAllLines(csvPath, StandardCharsets.UTF_8);
-        int total = Math.max(1, lines.size() - 1);
+        List<String> dataLines = lines.stream()
+                .skip(1)
+                .map(String::trim)
+                .filter(l -> !l.isEmpty())
+                .toList();
+        int total = Math.max(1, dataLines.size());
         int imported = 0;
 
-        for (int i = 1; i < lines.size(); i++) {
+        for (int i = 0; i < dataLines.size(); i++) {
             if (isCancelled()) {
                 updateMessage("Імпорт скасовано користувачем");
                 break;
             }
-            String line = lines.get(i).trim();
-            if (line.isEmpty()) continue;
-
+            String line = dataLines.get(i);
             String[] parts = line.split(";");
             if (parts.length != 5) {
-                LOG.warning("Пропущено некоректний рядок CSV №" + (i + 1) + ": " + line);
+                LOG.warning("Пропущено некоректний рядок CSV: " + line);
                 continue;
             }
 
@@ -52,7 +55,7 @@ public class ImportMeasurementsTask extends Task<Integer> {
             );
             client.addMeasurement(m);
             imported++;
-            updateProgress(i, total);
+            updateProgress(imported, total);
             updateMessage("Імпортовано: " + imported + " із " + total);
         }
         return imported;

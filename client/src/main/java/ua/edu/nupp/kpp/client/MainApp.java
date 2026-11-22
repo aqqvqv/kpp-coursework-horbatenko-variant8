@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import ua.edu.nupp.kpp.client.model.*;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
@@ -216,7 +217,12 @@ public class MainApp extends Application {
 
         refresh.setOnAction(e -> refreshMeasurements());
 
-        importDefaultCsv.setOnAction(e -> runCsvImport(Path.of("sample-data", "measurements.csv"), progressBar, statusLabel));
+        importDefaultCsv.setOnAction(e -> {
+            Path direct = Path.of("sample-data", "measurements.csv");
+            Path fromRoot = Path.of("client", "sample-data", "measurements.csv");
+            Path target = Files.exists(direct) ? direct : fromRoot;
+            runCsvImport(target, progressBar, statusLabel);
+        });
 
         chooseCsv.setOnAction(e -> {
             FileChooser chooser = new FileChooser();
