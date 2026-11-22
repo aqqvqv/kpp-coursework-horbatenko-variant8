@@ -1,0 +1,4 @@
+sample_id;parameter_name;measured_value;norm_value;unit
+1;Фосфати (PO4);4.2;3.5;мг/дм3
+2;Хлориди;180.0;300.0;мг/дм3
+2;Амоній сольовий;2.6;2.0;мг/дм3
